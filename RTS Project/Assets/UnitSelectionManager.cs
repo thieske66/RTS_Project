@@ -54,7 +54,7 @@ public class UnitSelectionManager : MonoBehaviour
             {
                 if (!Input.GetKey(KeyCode.LeftShift))
                 {
-                    deselectAll();
+                    DeselectAll();
                 }
             }
         }
@@ -79,25 +79,22 @@ public class UnitSelectionManager : MonoBehaviour
         {
             unitsSelected.Add(unit);
 
-            TriggerSelectionIndicator(unit, true);
-            EnableUnitMovement(unit, true);
+            SelectUnit(unit, false);
         }
         else
         {
             unitsSelected.Remove(unit);
 
-            TriggerSelectionIndicator(unit, false);
-            EnableUnitMovement(unit, false);
+            SelectUnit(unit, false);
         }
     }
 
     private void selectByClicking(GameObject unit)
     {
-        deselectAll();
+        DeselectAll();
         unitsSelected.Add(unit);
 
-        TriggerSelectionIndicator(unit, true);
-        EnableUnitMovement(unit, true);
+        SelectUnit(unit, true);
     }
 
     private void EnableUnitMovement(GameObject unit, bool shouldMove)
@@ -105,7 +102,7 @@ public class UnitSelectionManager : MonoBehaviour
         unit.GetComponent<UnitMovement>().enabled = shouldMove;
     }
 
-    private void deselectAll()
+    public void DeselectAll()
     {
         foreach (GameObject unit in unitsSelected)
         {
@@ -116,8 +113,25 @@ public class UnitSelectionManager : MonoBehaviour
         unitsSelected.Clear();
     }
 
+    internal void DragSelect(GameObject unit)
+    {
+        if (!unitsSelected.Contains(unit))
+        {
+            unitsSelected.Add(unit);
+            SelectUnit(unit, true);
+        }
+    }
+
+    private void SelectUnit(GameObject unit, bool selected)
+    {
+        TriggerSelectionIndicator(unit, selected);
+        EnableUnitMovement(unit, selected);
+    }
+
     private void TriggerSelectionIndicator(GameObject unit, bool isVisible)
     {
         unit.transform.GetChild(0).gameObject.SetActive(isVisible);
     }
+
+    
 }

@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class UnitSelectionBox : MonoBehaviour
 {
-    private Camera myCam;
+    const float rectBoxMinimumSizeToSelect = 10f;
+
+    Camera myCam;
+
     [SerializeField]
-    private RectTransform boxVisual;
-    private Rect selectionBox;
-    private Vector2 startPosition;
-    private Vector2 endPosition;
+    RectTransform boxVisual;
+
+    Rect selectionBox;
+
+    Vector2 startPosition;
+    Vector2 endPosition;
 
     private void Start()
     {
@@ -33,6 +38,12 @@ public class UnitSelectionBox : MonoBehaviour
         // When Dragging
         if (Input.GetMouseButton(0))
         {
+            if (Mathf.Abs(boxVisual.rect.size.magnitude) > rectBoxMinimumSizeToSelect)
+            {
+                UnitSelectionManager.Instance.DeselectAll();
+                SelectUnits();
+            }
+
             endPosition = Input.mousePosition;
             DrawVisual();
             DrawSelection();
@@ -41,7 +52,7 @@ public class UnitSelectionBox : MonoBehaviour
         // When Releasing
         if (Input.GetMouseButtonUp(0))
         {
-            //SelectUnits();
+            SelectUnits();
 
             startPosition = Vector2.zero;
             endPosition = Vector2.zero;
@@ -56,7 +67,7 @@ public class UnitSelectionBox : MonoBehaviour
         Vector2 boxEnd = endPosition;
 
         // Calculate the center of the selection box.
-        Vector2 boxCenter = (boxStart + boxEnd) * 0.5f;
+        Vector2 boxCenter = (boxStart + boxEnd) / 2;
 
         // Set the position of the visual selection box based on its center.
         boxVisual.position = boxCenter;
@@ -94,14 +105,14 @@ public class UnitSelectionBox : MonoBehaviour
         }
     }
 
-    //void SelectUnits()
-    //{
-    //    foreach (var unit in UnitSelectionManager.Instance.allUnitsList)
-    //    {
-    //        if (selectionBox.Contains(myCam.WorldToScreenPoint(unit.transform.position)))
-    //        {
-    //            UnitSelectionManager.Instance.DragSelect(unit);
-    //        }
-    //    }
-    //}
+    void SelectUnits()
+    {
+        foreach (var unit in UnitSelectionManager.Instance.allUnitsList)
+        {
+            if (selectionBox.Contains(myCam.WorldToScreenPoint(unit.transform.position)))
+            {
+                UnitSelectionManager.Instance.DragSelect(unit);
+            }
+        }
+    }
 }
