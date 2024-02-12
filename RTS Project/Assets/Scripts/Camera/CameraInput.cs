@@ -16,7 +16,7 @@ public class CameraInput : MonoBehaviour
 
     public Vector2 MoveInput { get; private set; }
     public float RotateInput { get; private set; }
-    public Vector2 ZoomInput { get; private set; }
+    public float ZoomInput { get; private set; }
 
     public static CameraInput Instance { get; private set; }
 
@@ -61,8 +61,8 @@ public class CameraInput : MonoBehaviour
         rotateAction.performed += context => RotateInput = context.ReadValue<float>();
         rotateAction.canceled += context => RotateInput = 0f;
 
-        zoomAction.performed += context => ZoomInput = context.ReadValue<Vector2>();
-        zoomAction.canceled += context => ZoomInput = Vector2.zero;
+        zoomAction.performed += context => ZoomInput = context.ReadValue<float>();
+        zoomAction.canceled += context => ZoomInput = 0f;
     }
 
 }
